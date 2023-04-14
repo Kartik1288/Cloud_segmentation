@@ -1,2 +1,19 @@
 # Cloud_segmentation
 38-Cloud: Cloud Segmentation in Satellite Images
+
+This is a deep learning-based project aimed at solving the problem of cloud segmentation in satellite images. Clouds in satellite images can obstruct the view of land objects and pose challenges for remote sensing applications such as change detection, geophysical parameter retrieval, and object tracking. Moreover, clouds themselves contain valuable information related to climate and natural disasters. Traditional approaches for cloud detection may not be effective in complex images with fragmented clouds and limited spectral information.
+
+## Data Preparation
+The dataset used in this project is obtained from Kaggle, titled "38-Cloud: Cloud Segmentation in Satellite Images". It contains 38 Landsat 8 scene images and their manually extracted pixel-level ground truths for cloud detection. The images have been cropped into multiple 384x384 patches for convenient input into the algorithms. The dataset consists of 8400 patches for training and 9201 patches for testing. Each input image patch has 4 spectral channels corresponding to Red, Green, Blue, and Near Infrared bands in the Landsat 8 sensing data, with integer values ranging from 0 to 255 (8-bit depth). The ground truth is a binarized mask image with pixel intensities of 1 for clouds and 0 for non-cloud areas. The dataset also includes CSV files for training and test scene IDs, as well as a CSV file for informative patches with more than 80% informative/non-zero pixels. The training set and testing set have data sizes of 5.45GB and 6.01GB, respectively. A validation set of 1000 images from the training set was held out for model validation.
+
+## The Model:
+In this project, I have implemented a U-Net, a type of fully convolutional neural network, to perform cloud segmentation on multispectral satellite images. U-Net has been successfully used in various applications such as medical image segmentation, image super-resolution, and imaging modality translation. I have trained the original U-Net as well as an attention gate-based U-Net, which has been shown to outperform the standard U-Net in terms of performance metrics. 
+
+The simplified U-Net architecture consists of 3 contracting blocks and 3 expanding blocks. The contracting blocks are responsible for downsizing the image resolution and extracting features from the original image. Each contracting block consists of two convolutional layers followed by batch normalization and a non-linear activation function, and ends with a max pooling operation to reduce the resolution by half. The expanding blocks, on the other hand, are responsible for increasing the resolution of the image using transpose convolutions, which are used to upsample the feature maps.
+
+We have implemented functions for the contract_block and expand_block, which take the number of input and output channels, kernel size, and padding as inputs, and return nn.Sequential containers that define the sequence of operations for the contracting and expanding blocks, respectively. These functions allow you to easily define the architecture of your U-Net model by stacking the contracting and expanding blocks in the desired order, while ensuring that the number of input channels for a block matches the number of output channels of the preceding block, and maintaining the resolution of the input image throughout the model.
+
+The overall U-Net model will inherit from the nn.Module class in PyTorch and will have a call() function that specifies the sequence of operations for the contracting and expanding blocks, including the skip connections between the corresponding contraction and expansion phases. Skip connections are important in U-Net architectures as they allow for the propagation of low-level and high-level features across different resolutions, helping to improve the segmentation performance.
+
+
+
